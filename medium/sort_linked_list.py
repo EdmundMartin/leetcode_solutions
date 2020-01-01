@@ -65,3 +65,48 @@ class SolutionFaster:
                 prev = val
         node_list[-1].next = None
         return node_list[0]
+
+
+# Runtime: 300 ms, faster than 11.18% of Python3 online submissions for Sort List.
+# Memory Usage: 39.1 MB, less than 15.38% of Python3 online submissions for Sort List.
+class SolutionInPlace:
+    def sortList(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+
+        middle_node = self.get_middle_node(head)
+        middle_next = middle_node.next
+
+        middle_node.next = None
+
+        left_part = self.sortList(head)
+        right_part = self.sortList(middle_next)
+
+        return self.merge_sort(left_part, right_part)
+
+    def get_middle_node(self, node: ListNode) -> ListNode:
+        if not node:
+            return node
+
+        slow = node
+        fast = node
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+
+        return slow
+
+    def merge_sort(self, left: ListNode, right: ListNode) -> ListNode:
+        sorted_node = None
+        if not left:
+            return right
+        if not right:
+            return left
+
+        if left.val <= right.val:
+            sorted_node = left
+            sorted_node.next = self.merge_sort(left.next, right)
+        else:
+            sorted_node = right
+            sorted_node.next = self.merge_sort(left, right.next)
+        return sorted_node
